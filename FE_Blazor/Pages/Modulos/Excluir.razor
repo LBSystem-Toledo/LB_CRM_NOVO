@@ -1,0 +1,49 @@
+﻿@page "/ModuloLBSystem/Excluir/{id:int}"
+@using Dominio
+@inject HttpClient client
+@inject NavigationManager navigationManager
+
+@if (modulo is not null)
+{
+    <div class="row">
+        <div class="col-lg-9">
+            <h1>@modulo.Ds_modulo</h1>
+        </div>
+        <div class="col-lg-3 text-end">
+            <a class="btn btn-secondary btn-sm" href="/ModuloLBSystem" role="button">Voltar</a>
+        </div>
+    </div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">Código</th>
+                <td>@modulo.Id</td>
+            </tr>
+            <tr>
+                <th scope="row">Nome Módulo</th>
+                <td>@modulo.Ds_modulo</td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-danger btn-sm" @onclick="@SubmitModuloAsync">Excluir</button>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    Modulo? modulo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        modulo = await client.GetFromJsonAsync<Modulo>("/v1/Modulo/GetModuloAsync?id_modulo=" + Id);
+    }
+
+    private async Task SubmitModuloAsync()
+    {
+        if (modulo is not null)
+        {
+            await client.DeleteAsync("/v1/Modulo?id_modulo=" + Id);
+            navigationManager.NavigateTo("/ModuloLBSystem");
+        }
+    }
+}

@@ -1,0 +1,43 @@
+﻿@page "/ModuloLBSystem/Alterar/{id:int}"
+@using Dominio
+@inject HttpClient client
+@inject NavigationManager navigationManager
+
+@if (modulo is not null)
+{
+    <div class="row">
+        <div class="col-lg-9">
+            <h1>@modulo.Ds_modulo</h1>
+        </div>
+        <div class="col-lg-3 text-end">
+            <a class="btn btn-secondary btn-sm" href="/ModuloLBSystem" role="button">Voltar</a>
+        </div>
+    </div>
+    <EditForm Model="@modulo" OnValidSubmit="@SubmitModuloAsync">
+        <div>
+            <label>Nome Módulo</label>
+            <InputText class="form-control" @bind-Value=modulo.Ds_modulo/>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id{ get; set; }
+    Modulo? modulo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        modulo = await client.GetFromJsonAsync<Modulo>("/v1/Modulo/GetModuloAsync?id_modulo=" + Id);
+    }
+
+    private async Task SubmitModuloAsync()
+    {
+        if (modulo is not null)
+        {
+            await client.PutAsJsonAsync<Modulo>("/v1/Modulo", modulo);
+            navigationManager.NavigateTo("/ModuloLBSystem");
+        }
+    }
+}

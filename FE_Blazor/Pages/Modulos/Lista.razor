@@ -1,0 +1,49 @@
+﻿@page "/ModuloLBSystem"
+@using Dominio
+@inject HttpClient client
+
+<div class="row">
+    <div class="col-lg-9">
+        <h1>Módulos LBSystem.NET</h1>
+    </div>
+    <div class="col-lg-3">
+        <a class="btn btn-primary btn-sm" href="/ModuloLBSystem/Novo" role="button">Novo Módulo</a>
+    </div>
+</div>
+
+@if(Modulos is null)
+{
+    <p><em>Carregando...</em></p>
+}
+else{
+    <table class="table table-bordered table-striped table-sm">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Módulo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var m in Modulos)
+            {
+                <tr>
+                    <td>@m.Id</td>
+                    <td>@m.Ds_modulo</td>
+                    <td class="text-end">
+                        <a class="btn btn-secondary btn-sm" href="/ModuloLBSystem/Alterar/@m.Id" role="button">Alterar</a>
+                        <a class="btn btn-danger btn-sm" href="/ModuloLBSystem/Excluir/@m.Id" role="button">Excluir</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code{
+    private Modulo[]? Modulos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Modulos = await client.GetFromJsonAsync<Modulo[]>("/v1/Modulo/GetAllModulosAsync");
+    }
+}
