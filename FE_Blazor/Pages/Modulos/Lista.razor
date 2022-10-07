@@ -27,11 +27,11 @@ else{
             @foreach(var m in Modulos)
             {
                 <tr>
-                    <td>@m.Id</td>
-                    <td>@m.Ds_modulo</td>
+                    <td>@m.IdModulo</td>
+                    <td>@m.DsModulo</td>
                     <td class="text-end">
-                        <a class="btn btn-secondary btn-sm" href="/ModuloLBSystem/Alterar/@m.Id" role="button">Alterar</a>
-                        <a class="btn btn-danger btn-sm" href="/ModuloLBSystem/Excluir/@m.Id" role="button">Excluir</a>
+                        <a class="btn btn-secondary btn-sm" href="/ModuloLBSystem/Alterar/@m.IdModulo" role="button">Alterar</a>
+                        <a class="btn btn-danger btn-sm" href="/ModuloLBSystem/Excluir/@m.IdModulo" role="button">Excluir</a>
                     </td>
                 </tr>
             }

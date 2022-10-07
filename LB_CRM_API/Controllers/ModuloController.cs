@@ -1,9 +1,7 @@
-﻿using Core.UnitOfWork;
+﻿using LB_CRM_API.UnitOfWork;
 using Dominio;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
-using System.Linq.Expressions;
+using LB_CRM_API.Services.Interface;
 
 namespace LB_CRM_API.Controllers
 {
@@ -13,68 +11,44 @@ namespace LB_CRM_API.Controllers
     public class ModuloController : ControllerBase
     {
         [HttpGet, Route("GetModuloAsync")]
-        public async Task<IActionResult> GetAsync([FromServices] IUnitOfCRM _banco,
-                                                  [FromQuery] int id_modulo)
+        public async Task<IActionResult> GetAsync([FromServices] IModuloService _query,
+                                                  [FromQuery] int IdModulo)
         {
             try
             {
-                var retorno = await _banco.ModuloRepositorio.GetEntityAsync(id_modulo);
-                return Ok(retorno);
+                return Ok(await _query.GetModuloAsync(IdModulo));
             }
             catch { return NotFound(); }
         }
         [HttpGet, Route("GetAllModulosAsync")]
-        public async Task<IActionResult> GetAllAsync([FromServices] IUnitOfCRM _banco,
-                                                     [FromQuery] string? ds_modulo)
+        public async Task<IActionResult> GetAllAsync([FromServices] IModuloService _query,
+                                                     [FromQuery] string? DsModulo)
         {
             try
             {
-                Expression<Func<Modulo, bool>>? exp = null;
-                if (!string.IsNullOrWhiteSpace(ds_modulo))
-                    exp = x => x.Ds_modulo.Contains(ds_modulo);
-                var retorno = await _banco.ModuloRepositorio.GetAllAsync(exp);
-                return Ok(retorno);
+                return Ok(await _query.GetModulosAsync(DsModulo));
             }
             catch { return NotFound(); }
         }
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromServices] IUnitOfCRM _banco,
+        public async Task<IActionResult> PostAsync([FromServices] IModuloService _query,
                                                    [FromBody] Modulo modulo)
         {
             try
             {
-                await _banco.ModuloRepositorio.AdicionarAsync(modulo);
-                await _banco.CommitAsync();
-                return Ok();
-            }
-            catch { return NotFound(); }
-        }
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromServices] IUnitOfCRM _banco,
-                                                  [FromBody] Modulo modulo)
-        {
-            try
-            {
-                _banco.ModuloRepositorio.Alterar(modulo);
-                await _banco.CommitAsync();
+                await _query.InsertOrUpdateAsync(modulo);
                 return Ok();
             }
             catch { return NotFound(); }
         }
         [HttpDelete]
-        public async Task<IActionResult> DeleteAsync([FromServices] IUnitOfCRM _banco,
-                                                     [FromQuery] int id_modulo)
+        public async Task<IActionResult> DeleteAsync([FromServices] IModuloService _query,
+                                                     [FromQuery] int IdModulo)
         {
             try
             {
-                Modulo? m = await _banco.ModuloRepositorio.GetEntityAsync(id_modulo);
-                if (m is not null)
-                {
-                    _banco.ModuloRepositorio.Deletar(m);
-                    await _banco.CommitAsync();
+                    await _query.DeleteAsync(IdModulo);
                     return Ok();
-                }
-                else return BadRequest();
             }
             catch { return NotFound(); }
         }

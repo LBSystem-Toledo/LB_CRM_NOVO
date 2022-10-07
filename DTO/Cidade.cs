@@ -2,9 +2,8 @@
 {
     public class Cidade
     {
-        public int Cd_cidade { get; set; }
-        public string Ds_cidade { get; set; } = string.Empty;
-        public int Cd_uf { get; set; }
-        public UF? Uf { get; set; } = null;
+        public int IdCidade { get; set; }
+        public string DsCidade { get; set; } = string.Empty;
+        public string Uf { get; set; } = string.Empty;
     }
 }

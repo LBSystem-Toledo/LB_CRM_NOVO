@@ -1,75 +1,34 @@
 ﻿using Core.Context;
 using Core.Repository;
-using Core.Repository.Interface;
-using Dominio;
 
 namespace Core.UnitOfWork
 {
-    public class UnitOfCRM : IUnitOfCRM, IDisposable
+    public class UnitOfCRM : IUnitOfCRM
     {
-        private readonly DataContext _context;
-        private RepositoryBase<Cidade>? _cidadeRepositorio = null;
-        private RepositoryBase<UF>? _ufRepositorio = null;
-        private RepositoryBase<Modulo>? _moduloRepositorio = null;
-        private RepositoryBase<Processo>? _processoRepositorio = null;
-        private bool disposed = false;
+        private ModuloRepository? _moduloRepository;
 
-        public UnitOfCRM(DataContext dataContext) { _context = dataContext; }
+        private readonly DapperContext _context;
+        public UnitOfCRM(DapperContext dapperContext) { _context = dapperContext; }
 
-        public IRepositoryBase<Cidade> CidadeRepositorio
+        public void BeginTransaction()
         {
-            get
-            {
-                if (_cidadeRepositorio == null)
-                    _cidadeRepositorio = new RepositoryBase<Cidade>(_context.Set<Cidade>());
-                return _cidadeRepositorio;
-            }
-        }
-        public IRepositoryBase<UF> UfRepositorio
-        {
-            get
-            {
-                if (_ufRepositorio == null)
-                    _ufRepositorio = new RepositoryBase<UF>(_context.Set<UF>());
-                return _ufRepositorio;
-            }
-        }
-        public IRepositoryBase<Modulo> ModuloRepositorio
-        {
-            get
-            {
-                if (_moduloRepositorio == null)
-                    _moduloRepositorio = new RepositoryBase<Modulo>(_context.Set<Modulo>());
-                return _moduloRepositorio;
-            }
-        }
-        public IRepositoryBase<Processo> ProcessoRepositorio
-        {
-            get
-            {
-                if (_processoRepositorio == null)
-                    _processoRepositorio = new RepositoryBase<Processo>(_context.Set<Processo>());
-                return _processoRepositorio;
-            }
+            _context.Transaction = _context.Connection?.BeginTransaction();
         }
 
-        public async Task CommitAsync()
+        public void Commit()
         {
-            await _context.SaveChangesAsync();
+            _context.Transaction?.Commit();
+            Dispose();
         }
 
-        protected virtual void Dispose(bool disposing)
+        public void Dispose() => _context.Transaction?.Dispose();
+
+        public void Rollback()
         {
-            if (!disposed)
-                if (disposing)
-                    _context.Dispose();
-            disposed = true;
+            _context.Transaction?.Rollback();
+            Dispose();
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        public ModuloRepository moduloRepository => _moduloRepository ?? (_moduloRepository = new ModuloRepository(_context));
     }
 }

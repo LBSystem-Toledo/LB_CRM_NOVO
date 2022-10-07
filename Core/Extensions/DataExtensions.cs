@@ -1,27 +1,15 @@
 ﻿using Core.Context;
 using Core.UnitOfWork;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Extensions
 {
     public static class DataExtensions
     {
-        public static IServiceCollection AddEntityFramework(this IServiceCollection services, IConfiguration configuration)
+        public static void AddRepositores(this IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("comCRM"));
-            });
-            return services;
-        }
-
-        public static IServiceCollection AddRepositores(this IServiceCollection services)
-        {
+            services.AddScoped<DapperContext>();
             services.AddTransient<IUnitOfCRM, UnitOfCRM>();
-
-            return services;
         }
     }
 }

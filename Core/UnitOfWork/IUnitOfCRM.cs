@@ -1,15 +1,15 @@
-﻿using Core.Repository.Interface;
+﻿using Core.Repository;
+using Core.Repository.Interface;
 using Dominio;
 
 namespace Core.UnitOfWork
 {
-    public interface IUnitOfCRM
+    public interface IUnitOfCRM: IDisposable
     {
-        IRepositoryBase<Cidade> CidadeRepositorio { get; }
-        IRepositoryBase<UF> UfRepositorio { get; }
-        IRepositoryBase<Modulo> ModuloRepositorio { get; }
-        IRepositoryBase<Processo> ProcessoRepositorio { get; }
+        public ModuloRepository moduloRepository { get; }
 
-        Task CommitAsync();
+        void BeginTransaction();
+        void Commit();
+        void Rollback();
     }
 }

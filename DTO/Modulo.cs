@@ -2,8 +2,8 @@
 {
     public class Modulo
     {
-        public int Id { get; set; }
-        public string Ds_modulo { get; set; } = string.Empty;
-        public ICollection<Processo>? Processos { get; set; }
+        public int IdModulo { get; set; }
+        public string DsModulo { get; set; } = string.Empty;
+        public IEnumerable<Processo>? Processos { get; set; }
     }
 }
